@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Your Groups</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    
+    .group-row { 
+      display:flex; 
+      align-items:center; 
+      justify-content:space-between; 
+      gap:12px; 
+    }
+    .group-info { 
+      display:flex; 
+      gap:12px; 
+      align-items:center; 
+    }
+    .group-code {
+      background: rgba(255,255,255,0.12);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight:600;
+      letter-spacing:1px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .muted { 
+      color: rgba(255,255,255,0.75); 
+      font-size:0.95rem; 
+    }
+    .small-btn { 
+      padding:8px 12px; 
+      border-radius:8px; 
+      font-size:0.9rem; 
+    }
+    .danger { 
+      background: #d9534f; 
+      color:white; 
+    }
+    .success { 
+      background: #28a745; 
+      color:white; 
+    }
+    .ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+    }
+    .empty-msg { 
+      color: rgba(255,255,255,0.9); 
+      padding: 18px; 
+      background: rgba(0,0,0,0.22); 
+      border-radius:10px; 
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/expenses">Expenses</a>
+      <a href="/categories">Categories</a>
+      <a href="/groups" style="background: rgba(255,255,255,0.06); color: var(--primary);">Groups</a>
+      <a href="/profile">Profile</a>
+      <a href="/logout" class="ghost">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1 style="color: black;">Groups</h1>
+      <p style="color: black;" class="muted">Hello, <strong style="color:var(--primary)"><%= username %></strong> — create or join a group to share expenses with others.</p>
+
+      <!-- CREATE GROUP -->
+      <section style="margin-top:18px;">
+        <h2 style="margin-bottom:8px;color:black;">Create a Group</h2>
+        <form id="createForm" action="/groups/create" method="POST" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <input type="text" name="name" placeholder="Group name (eg. Trip to Goa)" required>
+          <button type="submit" class="btn">Create Group</button>
+        </form>
+      </section>
+
+      <!-- JOIN GROUP -->
+      <section style="margin-top:20px;">
+        <h2 style="margin-bottom:8px;color: black;">Join a Group</h2>
+        <form id="joinForm" action="/groups/join" method="POST" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <input type="text" name="joinCode" placeholder="Enter join code (e.g. A3F9ZK)" required maxlength="8" style="text-transform:uppercase;">
+          <button type="submit" class="btn">Join Group</button>
+        </form>
+      </section>
+
+      <!-- GROUP LIST -->
+      <section style="margin-top:28px;">
+        <h2 style="margin-bottom:8px; color: black;">Groups you're a member of</h2>
+
+        <% if (groups && groups.length) { %>
+          <ul style="padding:0; margin:0;">
+            <% groups.forEach(group => { %>
+              <li>
+                <div class="group-row" style="width:100%;">
+                  <div class="group-info">
+                    <div style="display:flex;flex-direction:column;text-align:left;">
+                      <span style="font-size:1.05rem;font-weight:700;color:black;"><%= group.name %></span>
+                      
+                    </div>
+
+                    <div style="margin-left:12px;">
+                      <span class="group-code"><%= group.joinCode %></span>
+                    </div>
+                  </div>
+
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span class="muted" style="min-width:120px;text-align:right;color: black;">
+                      Members: <strong style="color:var(--primary)"><%= (group.members && group.members.length) ? group.members.length : 0 %></strong>
+                    </span>
+
+                    <!-- copy code -->
+                    <button class="small-btn ghost" type="button" data-code="<%= group.joinCode %>" onclick="copyCode(this)">Copy Code</button>
+
+                    <!-- view group (implement route /groups/:id to show group details & expenses) -->
+                    <a href="/groups/<%= group._id %>" class="small-btn success" style="text-decoration:none;">View</a>
+                  </div>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <div class="empty-msg">
+            You haven't joined or created any groups yet. Create a new group or join one using a code above.
+          </div>
+        <% } %>
+      </section>
+
+      <section style="margin-top:18px;">
+        <a href="/expenses" class="btn" style="text-decoration:none;">Back to Expenses</a>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // enforce uppercase on join code field
+    const joinForm = document.getElementById('joinForm');
+    if (joinForm) {
+      const codeInput = joinForm.querySelector('input[name="joinCode"]');
+      codeInput && codeInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase();
+      });
+    }
+
+    // copy join code
+    function copyCode(btn) {
+      const code = btn.getAttribute('data-code');
+      if (!code) return;
+      navigator.clipboard?.writeText(code).then(() => {
+        const original = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(()=> btn.innerText = original, 1400);
+      }).catch(()=> {
+        alert('Unable to copy. Code: ' + code);
+      });
+    }
+  </script>
+</body>
+</html>

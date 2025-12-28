@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= group.name %> - Group Details</title>
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        .paid { color: #4CAF50; font-weight: 600; }
+        .not-paid { color: #ff4444; font-weight: 600; }
+        .settled { color: #aaa; }
+        .exp-box {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        .status-list {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+        .status-list li {
+            margin: 5px 0;
+        }
+        .small-btn { padding: 5px 10px; font-size: 13px; }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <nav>
+        <a href="/groups" class="btn">Groups</a>
+        <a href="/expenses" class="btn">Expenses</a>
+        <a href="/profile" class="btn">Profile</a>
+        <a href="/logout" class="btn">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h1><%= group.name %></h1>
+    <p><strong>Group Code:</strong> <%= group.joinCode %></p>
+
+    <!-- ADD EXPENSE IN THIS GROUP -->
+    <a href="/expenses/add?group=<%= group._id %>" class="btn"> Add Expense in This Group</a>
+
+
+    <!-- MEMBERS -->
+    <h2>Members</h2>
+    <ul>
+        <% members.forEach(m => { %>
+            <li><%= m.username %> — <%= m.email %></li>
+        <% }) %>
+    </ul>
+
+
+    <!-- EXPENSE LIST -->
+    <h2>Group Expenses</h2>
+
+    <% if (groupExpenses.length === 0) { %>
+        <p>No expenses yet.</p>
+    <% } else { %>
+
+        <% groupExpenses.forEach(exp => { %>
+            <div class="exp-box">
+
+                <h3><%= exp.title %> — ₹<%= exp.amount %></h3>
+                <p>
+                    <small>
+                        Paid by: <strong><%= exp.userId.username %></strong> <br>
+                        Category: <%= exp.category ? exp.category.name : "None" %> <br>
+                        Date: <%= exp.date.toDateString() %>
+                    </small>
+                </p>
+
+                <h4>Payment Status</h4>
+
+                <ul class="status-list">
+
+                    <% members.forEach(m => {
+
+                        const hasPaid = exp.paidBy.some(
+                            id => id.toString() === m._id.toString()
+                        );
+
+                        const isPayer = m._id.toString() === exp.userId._id.toString();
+                        const isCurrentUser = m._id.toString() === userId.toString();
+                    %>
+
+                        <li>
+                            <%= m.username %> :
+
+                            <% if (hasPaid) { %>
+                                <span class="paid"> Paid</span>
+
+                                <!-- UNDO BUTTON -->
+                                <% if (!isPayer && isCurrentUser) { %>
+                                    <a href="/expenses/unpay/<%= exp._id %>" class="btn small-btn">Undo</a>
+                                <% } %>
+
+                            <% } else { %>
+
+                                <% if (isPayer) { %>
+                                    <span class="paid">(Payer – Auto Paid)</span>
+
+                                <% } else { %>
+                                    <span class="not-paid"> Not Paid</span>
+
+                                    <!-- PAY BUTTON -->
+                                    <% if (isCurrentUser) { %>
+                                        <a href="/expenses/pay/<%= exp._id %>" class="btn small-btn">Pay</a>
+                                    <% } %>
+
+                                <% } %>
+
+                            <% } %>
+
+                        </li>
+
+                    <% }) %>
+
+                </ul>
+
+                <!-- EDIT & DELETE (only expense owner) -->
+                <% if (exp.userId._id.toString() === userId.toString()) { %>
+                    <a href="/group-expenses/edit/<%= exp._id %>" class="btn small-btn">Edit</a>
+                    <a href="/group-expenses/delete/<%= exp._id %>" class="btn small-btn"
+                       onclick="return confirm('Delete this expense?');">
+                       Delete
+                    </a>
+                <% } %>
+
+            </div>
+        <% }) %>
+
+    <% } %>
+
+
+</div>
+
+</body>
+</html>

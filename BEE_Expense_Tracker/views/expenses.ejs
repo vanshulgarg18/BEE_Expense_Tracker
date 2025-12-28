@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Expenses</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/profile" class="btn"> Profile</a>
+            <a href="/logout" class="btn"> Logout</a>
+            <a href="/groups" class="btn">Groups</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Welcome, <%= username %></h1>
+        <h2>Your Expenses</h2>
+        <div class="total">Total Balance: ₹<%= total %></div>
+        
+        <!-- Search Bar -->
+        <form method="GET" action="/expenses" class="search-bar">
+            <input 
+                type="text" 
+                name="search" 
+                placeholder="Search expenses..." 
+                value="<%= search || '' %>">
+            <button type="submit">Search</button>
+        </form>
+
+        <ul>
+            <% if (expenses.length === 0) { %>
+                <li>No expenses yet!</li>
+            <% } %>
+            <% expenses.forEach(exp => { %>
+                <li>
+                        <div style="text-align:left; width:100%;">
+                            <strong><%= exp.title %></strong><br>
+                            Amount: ₹<%= exp.amount %><br>
+                            Date: <%= new Date(exp.date).toLocaleDateString() %><br>
+                            Category: 
+                            <span style="color:#4CAF50; font-weight:bold;">
+                                <%= exp.category ? exp.category.name : 'Uncategorized' %>
+                            </span>
+                        </div>
+                        <div class="expense-buttons">
+                            <a href="/expenses/edit/<%= exp._id %>" class="btn btn-edit">Edit</a>
+                            <a href="/expenses/delete/<%= exp._id %>" class="btn btn-delete">Delete</a>
+                        </div>
+                    </li>
+            <% }) %>
+        </ul>
+        <br>
+        <a href="/expenses/add" class="btn"> Add Expense</a>
+    </div>
+</body>
+</html>

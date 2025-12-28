@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Expense</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+        
+            <a href="/expenses" class="btn"> Home</a>
+            <a href="/profile" class="btn"> Profile</a>
+            <a href="/logout" class="btn"> Logout</a>
+        </nav>
+
+    </header>
+    <div class="container">
+        <h1>Edit Expense</h1>
+        <form action="/expenses/edit/<%= expense._id %>" method="POST">
+            <input type="text" name="title" value="<%= expense.title %>" required>
+            <input type="number" name="amount" value="<%= expense.amount %>" required>
+            <input type="date" name="date" value="<%= expense.date ?        expense.date.toISOString().substring(0,10) : '' %>" required>
+            
+            <label for="category"></label>
+            <select name="category" id="category" required>
+                <% categories.forEach(cat => { %>
+                    <option 
+                        value="<%= cat._id %>" 
+                        <%= expense.category == cat._id ? 'selected' : '' %>
+                    >
+                        <%= cat.name %>
+                    </option>
+                <% }) %>
+            </select>
+            <button type="submit"> Update Expense</button>
+        </form><br>
+        <a href="/expenses" class="btn"> Back to Expenses</a>
+    </div>
+</body>
+</html>

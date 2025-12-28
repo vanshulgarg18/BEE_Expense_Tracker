@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Categories</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/expenses" class="btn">Home</a>
+            <a href="/categories" class="btn">Categories</a>
+            <a href="/profile" class="btn">Profile</a>
+            <a href="/logout" class="btn">Logout</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Manage Categories</h1>
+
+        <!-- Add New Category Form -->
+        <form action="/categories/add" method="POST">
+            <input type="text" name="name" placeholder="Enter New Category" required>
+            <button type="submit">Add Category</button>
+        </form>
+
+        <!-- Category List -->
+        <h2>Your Categories</h2>
+        <% if (categories.length === 0) { %>
+            <p>No categories yet. Add your first one above!</p>
+        <% } else { %>
+            <ul>
+                <% categories.forEach(cat => { %>
+                    <li>
+                        <form action="/categories/edit/<%= cat._id %>" method="POST" style="display:inline;">
+                            <input type="text" name="name" value="<%= cat.name %>" required>
+                            <button type="submit">Edit</button>
+                        </form>
+                        <a href="/categories/delete/<%= cat._id %>" class="btn">Delete</a>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } %>
+
+        <a href="/expenses" class="btn">Back to Expenses</a>
+    </div>
+</body>
+</html>

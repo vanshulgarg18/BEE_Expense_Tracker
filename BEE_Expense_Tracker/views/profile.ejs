@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Profile</h3>
+        <form action="/profile" method="POST">
+            <input type="text" name="username" value="<%= user.username %>" required>
+            <input type="email" name="email" value="<%= user.email %>" required>
+            <input type="text" name="phone" value="<%= user.phone %>" required>
+            <input type="password" name="password" value="<%= user.password %>" required>
+            <button type="submit"> Update Profile</button>
+        </form>
+        <br>
+        <a href="/expenses" class="btn"> Back to Expenses</a>
+        <a href="/logout" class="btn"> Logout</a>
+    </div>
+</body>
+</html>
