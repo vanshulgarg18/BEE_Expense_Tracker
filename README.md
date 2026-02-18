@@ -3,7 +3,7 @@
 
 A Node.js and Express-based web application designed to help students manage and track their daily expenses securely with authentication and structured backend architecture.
 
-#Tech Stack
+##Tech Stack
 
 Node.js
 Express.js
@@ -14,7 +14,7 @@ bcrypt
 Express-session
 dotenv
 
-#Features
+##Features
 
 Secure user authentication with password hashing
 Session-based login and protected routes
